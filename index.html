@@ -64,12 +64,30 @@
         color: #202124;
       }
 
-      #resultados {
+      #resultadoBox {
+        background-color: #ffffff;
+        color: #000000;
+        padding: 15px;
+        border-radius: 6px;
+        min-height: 80px;
         white-space: pre-wrap;
         font-size: 14px;
-        color: #ffffff;
-        min-height: 30px;
         margin-top: 10px;
+      }
+
+      #copiarBtn {
+        margin-top: 15px;
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      #copiarBtn:hover {
+        background-color: darkred;
       }
     </style>
   </head>
@@ -94,7 +112,12 @@
     <!-- Caixa de resultados -->
     <div class="output-box">
       <h3>Identificação(s) Doc:</h3>
-      <div id="resultados">ESPELHO</div>
+
+      <!-- Área branca de saída de dados -->
+      <div id="resultadoBox">ESPELHO</div>
+
+      <!-- Botão de copiar -->
+      <button id="copiarBtn">Copiar</button>
     </div>
 
     <script>
@@ -115,34 +138,44 @@
       }
 
       function mostrarIdentificacoes(ids) {
-        const div = document.getElementById('resultados');
+        const div = document.getElementById('resultadoBox');
         div.textContent = ids.length ? ids.join('\n') : 'Nenhuma correspondência encontrada';
       }
 
       document.getElementById('orgaoSelect').addEventListener('change', function () {
         const orgao = this.value;
-        document.getElementById('resultados').textContent = 'Carregando caixas...';
+        document.getElementById('resultadoBox').textContent = 'Carregando caixas...';
         document.getElementById('caixaSelect').innerHTML = '';
         if (orgao) {
           google.script.run.withSuccessHandler(popularCaixas).getNumerosCaixa(orgao);
         } else {
-          document.getElementById('resultados').textContent = 'Selecione um órgão e um número de caixa';
+          document.getElementById('resultadoBox').textContent = 'Selecione um órgão e um número de caixa';
         }
       });
 
       document.getElementById('caixaSelect').addEventListener('change', function () {
         const orgao = document.getElementById('orgaoSelect').value;
         const caixa = this.value;
-        document.getElementById('resultados').textContent = 'Carregando identificações...';
+        document.getElementById('resultadoBox').textContent = 'Carregando identificações...';
         if (orgao && caixa) {
           google.script.run.withSuccessHandler(mostrarIdentificacoes).getIdentificacoes(orgao, caixa);
         } else {
-          document.getElementById('resultados').textContent = 'Selecione um órgão e um número de caixa';
+          document.getElementById('resultadoBox').textContent = 'Selecione um órgão e um número de caixa';
         }
       });
 
       document.addEventListener('DOMContentLoaded', function () {
         google.script.run.withSuccessHandler(popularOrgaos).getOrgaos();
+      });
+
+      // Função de copiar
+      document.getElementById('copiarBtn').addEventListener('click', function () {
+        const texto = document.getElementById('resultadoBox').textContent;
+        navigator.clipboard.writeText(texto).then(() => {
+          alert('Conteúdo copiado para a área de transferência!');
+        }).catch(err => {
+          alert('Erro ao copiar: ' + err);
+        });
       });
     </script>
   </body>

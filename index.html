@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Consulta de Caixas</title>
+    <style>
+      body {
+        font-family: 'Google Sans', Roboto, Arial, sans-serif;
+        background-color: #e3cf9e;
+        margin: 0;
+        padding: 40px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .icon-header {
+        margin-bottom: 20px;
+      }
+
+      .icon-header img {
+        width: 1.5cm;
+        height: 1.5cm;
+      }
+
+      .form-container,
+      .output-box {
+        background-color: rgba(121, 92, 100, 0.75);
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+        padding: 30px 40px;
+        box-sizing: border-box;
+        color: #ffffff;
+      }
+
+      .output-box {
+        margin-top: 20px;
+        padding: 20px 30px;
+      }
+
+      h2, h3 {
+        margin-top: 0;
+        font-weight: normal;
+        color: #ffffff;
+      }
+
+      label {
+        display: block;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #ffffff;
+      }
+
+      select {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        margin-top: 5px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        background-color: #ffffff;
+        color: #202124;
+      }
+
+      #resultados {
+        white-space: pre-wrap;
+        font-size: 14px;
+        color: #ffffff;
+        min-height: 30px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Ícone acima da caixa -->
+    <div class="icon-header">
+      <img src="https://cdn-icons-png.flaticon.com/512/887/887997.png" alt="Ícone de Documento" />
+    </div>
+
+    <!-- Caixa do formulário -->
+    <div class="form-container">
+      <h2>GERAR ESPELHO</h2>
+
+      <label for="orgaoSelect">Órgão:</label>
+      <select id="orgaoSelect"></select>
+
+      <label for="caixaSelect">Número da Caixa:</label>
+      <select id="caixaSelect"></select>
+    </div>
+
+    <!-- Caixa de resultados -->
+    <div class="output-box">
+      <h3>Identificação(s) Doc:</h3>
+      <div id="resultados">ESPELHO</div>
+    </div>
+
+    <script>
+      function popularOrgaos(orgaos) {
+        const sel = document.getElementById('orgaoSelect');
+        sel.innerHTML = '<option value="">-- Selecione --</option>';
+        orgaos.forEach(o => {
+          sel.add(new Option(o, o));
+        });
+      }
+
+      function popularCaixas(caixas) {
+        const sel = document.getElementById('caixaSelect');
+        sel.innerHTML = '<option value="">-- Selecione --</option>';
+        caixas.forEach(c => {
+          sel.add(new Option(c, c));
+        });
+      }
+
+      function mostrarIdentificacoes(ids) {
+        const div = document.getElementById('resultados');
+        div.textContent = ids.length ? ids.join('\n') : 'Nenhuma correspondência encontrada';
+      }
+
+      document.getElementById('orgaoSelect').addEventListener('change', function () {
+        const orgao = this.value;
+        document.getElementById('resultados').textContent = 'Carregando caixas...';
+        document.getElementById('caixaSelect').innerHTML = '';
+        if (orgao) {
+          google.script.run.withSuccessHandler(popularCaixas).getNumerosCaixa(orgao);
+        } else {
+          document.getElementById('resultados').textContent = 'Selecione um órgão e um número de caixa';
+        }
+      });
+
+      document.getElementById('caixaSelect').addEventListener('change', function () {
+        const orgao = document.getElementById('orgaoSelect').value;
+        const caixa = this.value;
+        document.getElementById('resultados').textContent = 'Carregando identificações...';
+        if (orgao && caixa) {
+          google.script.run.withSuccessHandler(mostrarIdentificacoes).getIdentificacoes(orgao, caixa);
+        } else {
+          document.getElementById('resultados').textContent = 'Selecione um órgão e um número de caixa';
+        }
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        google.script.run.withSuccessHandler(popularOrgaos).getOrgaos();
+      });
+    </script>
+  </body>
+</html>

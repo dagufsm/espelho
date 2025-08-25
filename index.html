@@ -89,6 +89,30 @@
       #copiarBtn:hover {
         background-color: darkred;
       }
+
+      /* Botão de retorno */
+      #voltarBtn {
+        margin-top: 30px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #4a4a4a;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      #voltarBtn:hover {
+        background-color: #2e2e2e;
+      }
+
+      #voltarBtn img {
+        width: 18px;
+        height: 18px;
+      }
     </style>
   </head>
   <body>
@@ -111,14 +135,20 @@
 
     <!-- Caixa de resultados -->
     <div class="output-box">
-      <h3>Identificação(s) Doc:</h3>
+      <h3>GERAR ESPELHO:</h3>
 
       <!-- Área branca de saída de dados -->
-      <div id="resultadoBox">ESPELHO</div>
+      <div id="resultadoBox"> Resultado</div>
 
       <!-- Botão de copiar -->
       <button id="copiarBtn">Copiar</button>
     </div>
+
+    <!-- Botão de voltar -->
+    <button id="voltarBtn" onclick="voltarPagina()">
+      <img src="https://cdn-icons-png.flaticon.com/512/271/271220.png" alt="Voltar">
+      Retornar
+    </button>
 
     <script>
       function popularOrgaos(orgaos) {
@@ -177,8 +207,12 @@
           alert('Erro ao copiar: ' + err);
         });
       });
+
+      // Função de voltar
+      function voltarPagina() {
+        // Altere para o link que você deseja
+        window.location.href = "URL_DA_PAGINA_ANTERIOR_AQUI";
+      }
     </script>
   </body>
 </html>
-
-
